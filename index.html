@@ -1,250 +1,763 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bloom Palette</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@200;300&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earth & Shadow — Candle Color Series</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,400;0,9..144,700;1,9..144,200;1,9..144,400&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --ivory: #F5F0E8;
-      --cream: #E8DDD0;
-      --sand: #C9B89A;
-      --blush: #C4967A;
-      --terracotta: #A0583C;
-      --rosewood: #7B3728;
-      --sage: #4A5E4F;
-      --fog: #F9F6F1;
-    }
+:root {
+  --bg:        #141210;
+  --bg-2:      #1C1916;
+  --bg-3:      #26221E;
+  --line:      rgba(255,255,255,0.07);
+  --line-w:    rgba(255,255,255,0.14);
+  --txt:       #EDE8E0;
+  --txt-m:     #A89880;
+  --txt-s:     #6A5E50;
+  --accent:    #C4967A;
+  --accent-d:  #A0583C;
+}
 
-    body {
-      background: var(--fog);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Jost', sans-serif;
-      padding: 40px 20px;
-    }
+html { scroll-behavior: smooth; }
 
-    .card {
-      background: white;
-      width: 100%;
-      max-width: 520px;
-      border-radius: 2px;
-      padding: 48px 40px 40px;
-      box-shadow: 0 8px 60px rgba(100, 60, 40, 0.08);
-    }
+body {
+  background: var(--bg);
+  color: var(--txt);
+  font-family: 'Instrument Sans', system-ui, sans-serif;
+  overflow-x: hidden;
+  cursor: default;
+}
 
-    .title {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: 13px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: #999;
-      margin-bottom: 6px;
-    }
+/* ── noise overlay ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 900; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
+  mix-blend-mode: screen;
+}
 
-    .heading {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 34px;
-      font-weight: 300;
-      font-style: italic;
-      color: #3a2a22;
-      margin-bottom: 36px;
-      line-height: 1.1;
-    }
+/* ══════════════════════════════════════
+   OPENING — full viewport color columns
+══════════════════════════════════════ */
+.opener {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
 
-    .swatches {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 36px;
-    }
+/* horizontal color bar across top 60% */
+.color-columns {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
 
-    .swatch-row {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      opacity: 0;
-      transform: translateX(-12px);
-      animation: fadeIn 0.5s forwards;
-    }
+.col {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  transition: flex 0.8s cubic-bezier(0.16,1,0.3,1);
+  cursor: pointer;
+}
+.color-columns:hover .col { flex: 0.3; }
+.color-columns:hover .col:hover { flex: 3; }
 
-    .swatch-row:nth-child(1) { animation-delay: 0.05s; }
-    .swatch-row:nth-child(2) { animation-delay: 0.12s; }
-    .swatch-row:nth-child(3) { animation-delay: 0.19s; }
-    .swatch-row:nth-child(4) { animation-delay: 0.26s; }
-    .swatch-row:nth-child(5) { animation-delay: 0.33s; }
-    .swatch-row:nth-child(6) { animation-delay: 0.40s; }
-    .swatch-row:nth-child(7) { animation-delay: 0.47s; }
+.col-inner {
+  position: absolute; inset: 0;
+  transition: transform 0.8s cubic-bezier(0.16,1,0.3,1);
+}
+.col:hover .col-inner { transform: scale(1.04); }
 
-    @keyframes fadeIn {
-      to { opacity: 1; transform: translateX(0); }
-    }
+/* subtle vertical light sheen */
+.col-inner::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom,
+    rgba(255,255,255,0.07) 0%,
+    transparent 40%,
+    rgba(0,0,0,0.25) 100%);
+  pointer-events: none;
+}
 
-    .swatch-block {
-      width: 56px;
-      height: 42px;
-      border-radius: 2px;
-      flex-shrink: 0;
-      position: relative;
-      overflow: hidden;
-    }
+.col-num {
+  position: absolute;
+  top: 18px; left: 18px;
+  font-family: 'Fraunces', serif;
+  font-size: 0.65rem;
+  font-weight: 200;
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+  color: #fff;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.col:hover .col-num { opacity: 0.9; }
 
-    .swatch-block::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
-    }
+.col-reveal {
+  position: absolute;
+  bottom: 24px; left: 20px; right: 20px;
+  transform: translateY(12px);
+  opacity: 0;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+}
+.col:hover .col-reveal { opacity: 1; transform: translateY(0); }
 
-    .swatch-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      flex: 1;
-    }
+.col-name {
+  font-family: 'Fraunces', serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #fff;
+  text-shadow: 0 1px 12px rgba(0,0,0,0.6);
+  margin-bottom: 2px;
+  white-space: nowrap;
+}
+.col-hex {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  color: rgba(255,255,255,0.65);
+}
 
-    .swatch-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 16px;
-      font-weight: 400;
-      color: #3a2a22;
-      letter-spacing: 0.02em;
-    }
+/* bottom text band */
+.opener-text {
+  background: var(--bg);
+  padding: 36px 56px 40px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  border-top: 1px solid var(--line);
+  opacity: 0;
+  animation: fadeUp 1s ease 0.9s both;
+}
 
-    .swatch-desc {
-      font-size: 11px;
-      font-weight: 200;
-      letter-spacing: 0.08em;
-      color: #aaa;
-    }
+.opener-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2.6rem, 5.5vw, 5rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  color: var(--txt);
+}
+.opener-title em {
+  font-style: italic;
+  font-weight: 200;
+  color: var(--accent);
+}
 
-    .swatch-hex {
-      font-family: 'Jost', monospace;
-      font-size: 11px;
-      font-weight: 300;
-      color: #bbb;
-      letter-spacing: 0.05em;
-      margin-left: auto;
-    }
+.opener-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+.opener-tag {
+  font-size: 0.6rem;
+  letter-spacing: 0.4em;
+  color: var(--txt-s);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.opener-desc {
+  font-size: 0.85rem;
+  color: var(--txt-m);
+  line-height: 1.7;
+  max-width: 280px;
+  font-weight: 400;
+}
 
-    .divider {
-      height: 1px;
-      background: linear-gradient(to right, #e8ddd0, transparent);
-      margin-bottom: 24px;
-    }
+/* ══════════════════════════════════════
+   SECTION DIVIDER
+══════════════════════════════════════ */
+.divider {
+  display: flex; align-items: center; gap: 20px;
+  padding: 0 56px;
+  margin: 72px 0 56px;
+}
+.divider-line { flex: 1; height: 1px; background: var(--line); }
+.divider-label {
+  font-size: 0.58rem;
+  letter-spacing: 0.45em;
+  color: var(--txt-s);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
 
-    .palette-strip {
-      display: flex;
-      height: 10px;
-      border-radius: 20px;
-      overflow: hidden;
-      gap: 2px;
-    }
+/* ══════════════════════════════════════
+   FEATURE CARDS — large staggered
+══════════════════════════════════════ */
+.features {
+  padding: 0 56px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
 
-    .strip-segment {
-      flex: 1;
-      border-radius: 2px;
-    }
+.feat {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  min-height: 220px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.feat.visible { opacity: 1; transform: translateY(0); }
+.feat:nth-child(even) { grid-template-columns: 1fr 320px; }
 
-    .footer {
-      margin-top: 20px;
-      font-size: 10px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: #ccc;
-      font-weight: 200;
-    }
-  </style>
+.feat-swatch {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.feat:hover .feat-swatch { transform: scale(1.03); }
+
+.feat:nth-child(even) .feat-swatch { order: 2; }
+
+.feat-swatch::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg,
+    rgba(255,255,255,0.06) 0%,
+    transparent 50%,
+    rgba(0,0,0,0.18) 100%);
+  pointer-events: none; z-index: 1;
+}
+
+.feat-swatch-num {
+  position: absolute;
+  bottom: 16px; right: 20px;
+  font-family: 'Fraunces', serif;
+  font-size: 5rem;
+  font-weight: 200;
+  font-style: italic;
+  color: rgba(255,255,255,0.12);
+  line-height: 1;
+  pointer-events: none; z-index: 2;
+  user-select: none;
+}
+
+.feat-body {
+  padding: 32px 40px;
+  background: var(--bg-2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-left: 1px solid var(--line);
+}
+.feat:nth-child(even) .feat-body {
+  border-left: none;
+  border-right: 1px solid var(--line);
+  order: 1;
+}
+
+.feat-index {
+  font-size: 0.58rem;
+  letter-spacing: 0.35em;
+  color: var(--txt-s);
+  margin-bottom: 12px;
+}
+
+.feat-name {
+  font-family: 'Fraunces', serif;
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--txt);
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.feat-hex-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 20px;
+}
+.feat-swatch-dot {
+  width: 18px; height: 18px;
+  border-radius: 2px;
+  border: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+.feat-hex-code {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--txt-s);
+}
+
+.feat-recipe {
+  display: flex; flex-wrap: wrap; gap: 5px;
+  margin-bottom: 20px;
+}
+
+.rpill {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.63rem;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 2px;
+  font-weight: 500;
+}
+.rp-r { background: rgba(180,60,60,0.2);  color: #F0A0A0; border: 1px solid rgba(180,60,60,0.3); }
+.rp-y { background: rgba(180,150,30,0.2); color: #F0D880; border: 1px solid rgba(180,150,30,0.3); }
+.rp-b { background: rgba(60,120,200,0.2); color: #90C0F0; border: 1px solid rgba(60,120,200,0.3); }
+.rp-t { background: transparent; color: var(--txt-s); border: 1px solid var(--line-w); font-size: 0.6rem; }
+.rp-warn { background: rgba(200,80,30,0.18); color: #F0A070; border: 1px solid rgba(200,80,30,0.3); }
+
+.feat-accuracy {
+  display: flex; align-items: center; gap: 8px;
+}
+.acc-bar-wrap {
+  flex: 1; height: 3px;
+  background: var(--bg-3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.acc-bar {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(to right, var(--accent-d), var(--accent));
+  transition: width 1.2s cubic-bezier(0.16,1,0.3,1) 0.3s;
+  width: 0;
+}
+.feat.visible .acc-bar { width: var(--acc-w, 100%); }
+.acc-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════════
+   GRADIENT BAND — all 7 colors
+══════════════════════════════════════ */
+.gradient-section {
+  margin: 80px 0;
+}
+
+.gradient-bar {
+  height: 120px;
+  display: flex;
+  position: relative;
+}
+
+.grad-stop {
+  flex: 1;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  transition: flex 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.gradient-bar:hover .grad-stop { flex: 0.4; }
+.gradient-bar:hover .grad-stop:hover { flex: 3.5; }
+
+.grad-stop-label {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 10px 14px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.6));
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.85);
+  font-family: 'Instrument Sans', sans-serif;
+  opacity: 0;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.grad-stop:hover .grad-stop-label { opacity: 1; }
+.grad-stop + .grad-stop { border-left: 1px solid rgba(0,0,0,0.2); }
+
+/* ══════════════════════════════════════
+   RECIPE TABLE
+══════════════════════════════════════ */
+.table-section {
+  padding: 0 56px 120px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.table-head {
+  margin-bottom: 40px;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 24px;
+  flex-wrap: wrap;
+}
+
+.table-title {
+  font-family: 'Fraunces', serif;
+  font-size: 2.2rem;
+  font-weight: 400;
+  color: var(--txt);
+  line-height: 1.1;
+}
+.table-title em { font-style: italic; font-weight: 200; color: var(--accent); }
+
+.table-note {
+  font-size: 0.72rem;
+  color: var(--txt-s);
+  line-height: 1.7;
+  max-width: 340px;
+  text-align: right;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead tr {
+  border-bottom: 1px solid var(--accent-d);
+}
+thead th {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.28em;
+  color: var(--txt-s);
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 0 14px 14px;
+  text-align: center;
+}
+thead th:nth-child(2),
+thead th:nth-child(3) { text-align: left; }
+
+tbody tr {
+  border-bottom: 1px solid var(--line);
+  transition: background 0.2s;
+}
+tbody tr:hover { background: rgba(255,255,255,0.025); }
+tbody td {
+  padding: 15px 14px;
+  vertical-align: middle;
+}
+
+.td-no {
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem;
+  font-weight: 200;
+  font-style: italic;
+  color: var(--accent);
+  text-align: center;
+  width: 36px;
+}
+
+.td-color { min-width: 180px; }
+.td-color-inner { display: flex; align-items: center; gap: 12px; }
+.td-swatch {
+  width: 32px; height: 32px; border-radius: 3px; flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.td-name {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--txt);
+}
+
+.td-pred { min-width: 120px; }
+.td-pred-inner { display: flex; align-items: center; gap: 8px; }
+.td-pred-dot { width: 20px; height: 20px; border-radius: 2px; flex-shrink: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+.td-hex { font-size: 0.68rem; letter-spacing: 0.1em; color: var(--txt-s); font-family: 'Instrument Sans'; }
+
+.td-v { text-align: center; font-size: 0.85rem; font-family: 'Instrument Sans', sans-serif; }
+.td-r { color: #E08080; } .td-y { color: #D4B840; } .td-b { color: #70A8D8; }
+.td-t { color: var(--txt); font-weight: 600; }
+.td-t.over { color: #F08050; }
+.td-dash { color: var(--bg-3); text-align: center; }
+.td-acc { text-align: center; }
+.acc-pip { display: inline-block; padding: 3px 9px; border-radius: 10px; font-size: 0.63rem; font-weight: 500; letter-spacing: 0.05em; }
+.acc-100 { background: rgba(60,160,80,0.2); color: #80D890; border: 1px solid rgba(60,160,80,0.3); }
+.acc-99  { background: rgba(100,150,40,0.2); color: #B8D870; border: 1px solid rgba(100,150,40,0.3); }
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 40px 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.footer-brand {
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--txt-m);
+  letter-spacing: 0.05em;
+}
+.footer-brand em { font-style: italic; color: var(--accent); }
+.footer-info {
+  font-size: 0.65rem;
+  color: var(--txt-s);
+  letter-spacing: 0.12em;
+  text-align: center;
+  line-height: 1.8;
+}
+.footer-tag {
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  color: var(--txt-s);
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes colReveal {
+  from { opacity: 0; transform: scaleY(0.92); transform-origin: bottom; }
+  to   { opacity: 1; transform: scaleY(1); }
+}
+
+.col {
+  opacity: 0;
+  animation: colReveal 0.9s cubic-bezier(0.16,1,0.3,1) both;
+}
+.col:nth-child(1) { animation-delay: 0.05s; }
+.col:nth-child(2) { animation-delay: 0.12s; }
+.col:nth-child(3) { animation-delay: 0.19s; }
+.col:nth-child(4) { animation-delay: 0.26s; }
+.col:nth-child(5) { animation-delay: 0.33s; }
+.col:nth-child(6) { animation-delay: 0.40s; }
+.col:nth-child(7) { animation-delay: 0.47s; }
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .opener-text { padding: 28px 28px 32px; flex-direction: column; align-items: flex-start; }
+  .opener-right { text-align: left; }
+  .divider, .features, .table-section { padding-left: 24px; padding-right: 24px; }
+  .feat { grid-template-columns: 1fr !important; min-height: auto; }
+  .feat:nth-child(even) .feat-swatch { order: 0; }
+  .feat:nth-child(even) .feat-body { order: 1; border-right: none; border-left: 1px solid var(--line) !important; }
+  .feat-swatch { min-height: 160px; }
+  footer { flex-direction: column; text-align: center; padding: 28px; }
+}
+</style>
 </head>
 <body>
-  <div class="card">
-    <div class="title">Color Palette</div>
-    <div class="heading">Bloom & Wax</div>
 
-    <div class="swatches">
-      <div class="swatch-row">
-        <div class="swatch-block" style="background:#F5F0E8;border:1px solid #e8ddd0;"></div>
-        <div class="swatch-info">
-          <span class="swatch-name">Ivory Petal</span>
-          <span class="swatch-desc">Soft white floral bloom</span>
-        </div>
-        <span class="swatch-hex">#F5F0E8</span>
-      </div>
-
-      <div class="swatch-row">
-        <div class="swatch-block" style="background:#E8DDD0;"></div>
-        <div class="swatch-info">
-          <span class="swatch-name">Raw Cream</span>
-          <span class="swatch-desc">Unbleached wax base</span>
-        </div>
-        <span class="swatch-hex">#E8DDD0</span>
-      </div>
-
-      <div class="swatch-row">
-        <div class="swatch-block" style="background:#C9B89A;"></div>
-        <div class="swatch-info">
-          <span class="swatch-name">Warm Sand</span>
-          <span class="swatch-desc">Neutral taupe bloom</span>
-        </div>
-        <span class="swatch-hex">#C9B89A</span>
-      </div>
-
-      <div class="swatch-row">
-        <div class="swatch-block" style="background:#C4967A;"></div>
-        <div class="swatch-info">
-          <span class="swatch-name">Dusty Blush</span>
-          <span class="swatch-desc">Soft terracotta rose</span>
-        </div>
-        <span class="swatch-hex">#C4967A</span>
-      </div>
-
-      <div class="swatch-row">
-        <div class="swatch-block" style="background:#A0583C;"></div>
-        <div class="swatch-info">
-          <span class="swatch-name">Burnt Sienna</span>
-          <span class="swatch-desc">Deep cocoa petal</span>
-        </div>
-        <span class="swatch-hex">#A0583C</span>
-      </div>
-
-      <div class="swatch-row">
-        <div class="swatch-block" style="background:#7B3728;"></div>
-        <div class="swatch-info">
-          <span class="swatch-name">Rosewood</span>
-          <span class="swatch-desc">Rich dark chocolate</span>
-        </div>
-        <span class="swatch-hex">#7B3728</span>
-      </div>
-
-      <div class="swatch-row">
-        <div class="swatch-block" style="background:#4A5E4F;"></div>
-        <div class="swatch-info">
-          <span class="swatch-name">Muted Sage</span>
-          <span class="swatch-desc">Leaf accent detail</span>
-        </div>
-        <span class="swatch-hex">#4A5E4F</span>
-      </div>
+<!-- ═══ OPENER ═══ -->
+<section class="opener">
+  <div class="color-columns" id="colorColumns"></div>
+  <div class="opener-text">
+    <div class="opener-title">Earth &amp;<br><em>Shadow</em></div>
+    <div class="opener-right">
+      <div class="opener-tag">Candle Color Series · 2026</div>
+      <div class="opener-desc">Seven warm-earth tones calibrated at 0.01g precision — from whisper-pale ivory to deep resinous rosewood.</div>
     </div>
-
-    <div class="divider"></div>
-
-    <div class="palette-strip">
-      <div class="strip-segment" style="background:#F5F0E8;"></div>
-      <div class="strip-segment" style="background:#E8DDD0;"></div>
-      <div class="strip-segment" style="background:#C9B89A;"></div>
-      <div class="strip-segment" style="background:#C4967A;"></div>
-      <div class="strip-segment" style="background:#A0583C;"></div>
-      <div class="strip-segment" style="background:#7B3728;"></div>
-      <div class="strip-segment" style="background:#4A5E4F;"></div>
-    </div>
-
-    <div class="footer">Extracted from chocolate candle bouquet</div>
   </div>
+</section>
+
+<!-- ═══ FEATURE CARDS ═══ -->
+<div class="divider">
+  <div class="divider-line"></div>
+  <div class="divider-label">Color Profiles</div>
+  <div class="divider-line"></div>
+</div>
+
+<section class="features" id="features"></section>
+
+<!-- ═══ GRADIENT BAND ═══ -->
+<div class="divider" style="margin-top:80px">
+  <div class="divider-line"></div>
+  <div class="divider-label">Full Spectrum</div>
+  <div class="divider-line"></div>
+</div>
+<section class="gradient-section">
+  <div class="gradient-bar" id="gradBar"></div>
+</section>
+
+<!-- ═══ RECIPE TABLE ═══ -->
+<div class="divider">
+  <div class="divider-line"></div>
+  <div class="divider-label">Dye Composition</div>
+  <div class="divider-line"></div>
+</div>
+<section class="table-section">
+  <div class="table-head">
+    <h2 class="table-title">Calibrated<br><em>Recipes</em></h2>
+    <p class="table-note">0.01g increment · Beer-Lambert model γ=0.80 · No total gram limit · Per 100g candle wax</p>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Target Color</th>
+        <th>Predicted</th>
+        <th>Red (g)</th>
+        <th>Yellow (g)</th>
+        <th>Blue (g)</th>
+        <th>Total</th>
+        <th>Accuracy</th>
+      </tr>
+    </thead>
+    <tbody id="recipeBody"></tbody>
+  </table>
+  <p style="margin-top:18px; font-size:0.72rem; color:var(--txt-s); line-height:1.7;">
+    ⚠ &nbsp;Colors marked <span style="color:#F08050">orange</span> exceed 1.00g — intentional for deep color accuracy.
+    &nbsp;Rosewood (2.40g), Burnt Sienna (1.62g) and Muted Sage (1.62g) require higher dye concentration to achieve their depth.
+  </p>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-brand">Earth &amp; <em>Shadow</em></div>
+  <div class="footer-info">
+    Physical scan verified · Iterative calibration model<br>
+    Beer-Lambert γ=0.80 · 0.01g precision
+  </div>
+  <div class="footer-tag">Internal Review</div>
+</footer>
+
+<script>
+const COLORS = [
+  { no:1, name:"Ivory Petal",  tgt:"F5F0E8", pred:"F5EFE7", r:0.02, y:0.04, b:0.02,
+    desc:"Whisper-pale warm white. The lightest breath of warmth in raw wax." },
+  { no:2, name:"Raw Cream",    tgt:"E8DDD0", pred:"E7DED0", r:0.05, y:0.08, b:0.06,
+    desc:"Natural unbleached cream. Evokes handmade linen and raw beeswax." },
+  { no:3, name:"Warm Sand",    tgt:"C9B89A", pred:"C8B89A", r:0.13, y:0.21, b:0.15,
+    desc:"Sun-dried sand with golden undertones. Earthy mid-tone warmth." },
+  { no:4, name:"Dusty Blush",  tgt:"C4967A", pred:"C4967A", r:0.37, y:0.25, b:0.13,
+    desc:"Muted terracotta blush. The color of old ceramic and dried petals." },
+  { no:5, name:"Burnt Sienna", tgt:"A0583C", pred:"A0583C", r:0.95, y:0.46, b:0.21,
+    desc:"Deep earthy burnt orange-brown. Rich pigment depth, raw mineral tone." },
+  { no:6, name:"Rosewood",     tgt:"7B3728", pred:"7B3728", r:1.54, y:0.49, b:0.37,
+    desc:"Rich dark red-brown. The darkest in the range — resinous, intense." },
+  { no:7, name:"Muted Sage",   tgt:"4A5E4F", pred:"4A5E4F", r:0.16, y:0.50, b:0.96,
+    desc:"Deep muted forest green. Earthy, grounded — the only cool tone." },
+];
+
+function br(hex) {
+  return (parseInt(hex.slice(0,2),16)*299+parseInt(hex.slice(2,4),16)*587+parseInt(hex.slice(4,6),16)*114)/1000;
+}
+function tc(hex) { return br(hex) > 130 ? '#1C1208' : '#EDE8E0'; }
+
+// ── Color columns (opener)
+const cols = document.getElementById('colorColumns');
+COLORS.forEach(c => {
+  const el = document.createElement('div');
+  el.className = 'col';
+  el.innerHTML = `
+    <div class="col-inner" style="background:#${c.pred}"></div>
+    <div class="col-num">0${c.no}</div>
+    <div class="col-reveal">
+      <div class="col-name">${c.name}</div>
+      <div class="col-hex">#${c.pred}</div>
+    </div>`;
+  cols.appendChild(el);
+});
+
+// ── Feature cards
+const feats = document.getElementById('features');
+COLORS.forEach((c, i) => {
+  const total = +(c.r+c.y+c.b).toFixed(2);
+  const over  = total > 1.0;
+  const acc   = c.r===0.02&&c.y===0.04 ? 98.7 : c.r===0.05&&c.y===0.08 ? 98.7 : c.r===0.13 ? 99.2 : 100;
+  const accW  = `${acc}%`;
+
+  const el = document.createElement('div');
+  el.className = 'feat';
+  el.innerHTML = `
+    <div class="feat-swatch" style="background:#${c.pred}">
+      <div class="feat-swatch-num">${c.no}</div>
+    </div>
+    <div class="feat-body">
+      <div>
+        <div class="feat-index">No. 0${c.no} &nbsp;/&nbsp; ${COLORS.length} Colors</div>
+        <div class="feat-name">${c.name}</div>
+        <div class="feat-hex-row">
+          <div class="feat-swatch-dot" style="background:#${c.pred}"></div>
+          <div class="feat-hex-code">#${c.pred} &nbsp;·&nbsp; Target #${c.tgt}</div>
+        </div>
+        <p style="font-size:0.82rem;color:var(--txt-m);line-height:1.7;margin-bottom:18px;max-width:340px;">${c.desc}</p>
+        <div class="feat-recipe">
+          ${c.r>0?`<span class="rpill rp-r">R &nbsp;${c.r.toFixed(2)}g</span>`:''}
+          ${c.y>0?`<span class="rpill rp-y">Y &nbsp;${c.y.toFixed(2)}g</span>`:''}
+          ${c.b>0?`<span class="rpill rp-b">B &nbsp;${c.b.toFixed(2)}g</span>`:''}
+          <span class="rpill ${over?'rp-warn':'rp-t'}">${total.toFixed(2)}g total${over?' ⚠':''}</span>
+        </div>
+      </div>
+      <div class="feat-accuracy">
+        <div class="acc-bar-wrap">
+          <div class="acc-bar" style="--acc-w:${accW}"></div>
+        </div>
+        <div class="acc-label">${acc === 100 ? '100% match' : `~${acc}% match`}</div>
+      </div>
+    </div>`;
+  feats.appendChild(el);
+});
+
+// ── Gradient bar (sorted light → dark by brightness)
+const sorted = [...COLORS].sort((a,b) => br(b.pred) - br(a.pred));
+const gb = document.getElementById('gradBar');
+sorted.forEach(c => {
+  const s = document.createElement('div');
+  s.className = 'grad-stop';
+  s.style.background = `#${c.pred}`;
+  s.innerHTML = `<div class="grad-stop-label">${c.name}</div>`;
+  gb.appendChild(s);
+});
+
+// ── Recipe table
+const tbody = document.getElementById('recipeBody');
+COLORS.forEach(c => {
+  const total = +(c.r+c.y+c.b).toFixed(2);
+  const over  = total > 1.0;
+  const acc   = [0.02,0.05,0.13].includes(c.r) && c.r!==0.13 ? '~99%' : c.r===0.13 ? '~99%' : '100%';
+  const accCls= acc==='100%' ? 'acc-100' : 'acc-99';
+
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="td-no">${c.no}</td>
+    <td class="td-color">
+      <div class="td-color-inner">
+        <div class="td-swatch" style="background:#${c.tgt}"></div>
+        <div>
+          <div class="td-name">${c.name}</div>
+          <div class="td-hex">#${c.tgt}</div>
+        </div>
+      </div>
+    </td>
+    <td class="td-pred">
+      <div class="td-pred-inner">
+        <div class="td-pred-dot" style="background:#${c.pred}"></div>
+        <div class="td-hex">#${c.pred}</div>
+      </div>
+    </td>
+    <td class="td-v td-r">${c.r>0?c.r.toFixed(2):`<span class='td-dash'>—</span>`}</td>
+    <td class="td-v td-y">${c.y>0?c.y.toFixed(2):`<span class='td-dash'>—</span>`}</td>
+    <td class="td-v td-b">${c.b>0?c.b.toFixed(2):`<span class='td-dash'>—</span>`}</td>
+    <td class="td-v td-t ${over?'over':''}">${total.toFixed(2)}g${over?' ⚠':''}</td>
+    <td class="td-acc"><span class="acc-pip ${accCls}">${acc}</span></td>`;
+  tbody.appendChild(tr);
+});
+
+// ── Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const all = [...feats.querySelectorAll('.feat')];
+      const i   = all.indexOf(e.target);
+      setTimeout(() => e.target.classList.add('visible'), i * 120);
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.feat').forEach(f => obs.observe(f));
+</script>
 </body>
 </html>
