@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bloom Palette</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@200;300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ivory: #F5F0E8;
+      --cream: #E8DDD0;
+      --sand: #C9B89A;
+      --blush: #C4967A;
+      --terracotta: #A0583C;
+      --rosewood: #7B3728;
+      --sage: #4A5E4F;
+      --fog: #F9F6F1;
+    }
+
+    body {
+      background: var(--fog);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Jost', sans-serif;
+      padding: 40px 20px;
+    }
+
+    .card {
+      background: white;
+      width: 100%;
+      max-width: 520px;
+      border-radius: 2px;
+      padding: 48px 40px 40px;
+      box-shadow: 0 8px 60px rgba(100, 60, 40, 0.08);
+    }
+
+    .title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 13px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 6px;
+    }
+
+    .heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 34px;
+      font-weight: 300;
+      font-style: italic;
+      color: #3a2a22;
+      margin-bottom: 36px;
+      line-height: 1.1;
+    }
+
+    .swatches {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 36px;
+    }
+
+    .swatch-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      opacity: 0;
+      transform: translateX(-12px);
+      animation: fadeIn 0.5s forwards;
+    }
+
+    .swatch-row:nth-child(1) { animation-delay: 0.05s; }
+    .swatch-row:nth-child(2) { animation-delay: 0.12s; }
+    .swatch-row:nth-child(3) { animation-delay: 0.19s; }
+    .swatch-row:nth-child(4) { animation-delay: 0.26s; }
+    .swatch-row:nth-child(5) { animation-delay: 0.33s; }
+    .swatch-row:nth-child(6) { animation-delay: 0.40s; }
+    .swatch-row:nth-child(7) { animation-delay: 0.47s; }
+
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .swatch-block {
+      width: 56px;
+      height: 42px;
+      border-radius: 2px;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .swatch-block::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+    }
+
+    .swatch-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .swatch-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      font-weight: 400;
+      color: #3a2a22;
+      letter-spacing: 0.02em;
+    }
+
+    .swatch-desc {
+      font-size: 11px;
+      font-weight: 200;
+      letter-spacing: 0.08em;
+      color: #aaa;
+    }
+
+    .swatch-hex {
+      font-family: 'Jost', monospace;
+      font-size: 11px;
+      font-weight: 300;
+      color: #bbb;
+      letter-spacing: 0.05em;
+      margin-left: auto;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, #e8ddd0, transparent);
+      margin-bottom: 24px;
+    }
+
+    .palette-strip {
+      display: flex;
+      height: 10px;
+      border-radius: 20px;
+      overflow: hidden;
+      gap: 2px;
+    }
+
+    .strip-segment {
+      flex: 1;
+      border-radius: 2px;
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #ccc;
+      font-weight: 200;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="title">Color Palette</div>
+    <div class="heading">Bloom & Wax</div>
+
+    <div class="swatches">
+      <div class="swatch-row">
+        <div class="swatch-block" style="background:#F5F0E8;border:1px solid #e8ddd0;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Ivory Petal</span>
+          <span class="swatch-desc">Soft white floral bloom</span>
+        </div>
+        <span class="swatch-hex">#F5F0E8</span>
+      </div>
+
+      <div class="swatch-row">
+        <div class="swatch-block" style="background:#E8DDD0;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Raw Cream</span>
+          <span class="swatch-desc">Unbleached wax base</span>
+        </div>
+        <span class="swatch-hex">#E8DDD0</span>
+      </div>
+
+      <div class="swatch-row">
+        <div class="swatch-block" style="background:#C9B89A;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Warm Sand</span>
+          <span class="swatch-desc">Neutral taupe bloom</span>
+        </div>
+        <span class="swatch-hex">#C9B89A</span>
+      </div>
+
+      <div class="swatch-row">
+        <div class="swatch-block" style="background:#C4967A;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Dusty Blush</span>
+          <span class="swatch-desc">Soft terracotta rose</span>
+        </div>
+        <span class="swatch-hex">#C4967A</span>
+      </div>
+
+      <div class="swatch-row">
+        <div class="swatch-block" style="background:#A0583C;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Burnt Sienna</span>
+          <span class="swatch-desc">Deep cocoa petal</span>
+        </div>
+        <span class="swatch-hex">#A0583C</span>
+      </div>
+
+      <div class="swatch-row">
+        <div class="swatch-block" style="background:#7B3728;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Rosewood</span>
+          <span class="swatch-desc">Rich dark chocolate</span>
+        </div>
+        <span class="swatch-hex">#7B3728</span>
+      </div>
+
+      <div class="swatch-row">
+        <div class="swatch-block" style="background:#4A5E4F;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Muted Sage</span>
+          <span class="swatch-desc">Leaf accent detail</span>
+        </div>
+        <span class="swatch-hex">#4A5E4F</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="palette-strip">
+      <div class="strip-segment" style="background:#F5F0E8;"></div>
+      <div class="strip-segment" style="background:#E8DDD0;"></div>
+      <div class="strip-segment" style="background:#C9B89A;"></div>
+      <div class="strip-segment" style="background:#C4967A;"></div>
+      <div class="strip-segment" style="background:#A0583C;"></div>
+      <div class="strip-segment" style="background:#7B3728;"></div>
+      <div class="strip-segment" style="background:#4A5E4F;"></div>
+    </div>
+
+    <div class="footer">Extracted from chocolate candle bouquet</div>
+  </div>
+</body>
+</html>
